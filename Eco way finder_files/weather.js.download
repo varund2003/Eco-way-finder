@@ -1,0 +1,208 @@
+$(document).ready(function () {
+
+    // Translation table, from openweathermap ids to 
+    function openweathermap_id_to_meteocon_id(openweathermap_id, daytime) {
+
+        // Default to daytime if not set (used for clear sky and partly cloudy to show sun/moon)
+        daytime = (typeof daytime === "undefined") ? true : daytime;
+
+        // Make sure that openweathermap_id is a number
+        openweathermap_id = Number(openweathermap_id);
+
+        // Work out which meteocon to use
+        switch (openweathermap_id) {
+
+            // Thunderstorm
+            case 200: // thunderstorm with light rain
+            case 201: // thunderstorm with rain
+            case 202: // thunderstorm with heavy rain
+            case 210: // light thunderstorm
+            case 211: // thunderstorm
+            case 212: // heavy thunderstorm
+            case 221: // ragged thunderstorm
+            case 230: // thunderstorm with light drizzle
+            case 231: // thunderstorm with drizzle
+            case 232: // thunderstorm with heavy drizzle
+                meteocons = '6';
+                break;
+
+            // Drizzle
+            case 300: // light intensity drizzle
+            case 301: // drizzle
+            case 302: // heavy intensity drizzle
+            case 310: // light intensity drizzle rain
+            case 311: // drizzle rain
+            case 312: // heavy intensity drizzle rain
+            case 313: // shower rain and drizzle
+            case 314: // heavy shower rain and drizzle
+            case 321: // shower drizzle
+            case 500: // light rain
+            case 501: // moderate rain
+            case 520: // light intensity shower rain
+            case 521: // shower rain
+                meteocons = '7';
+                break;
+
+            // Rain
+            case 502: // heavy intensity rain
+            case 503: // very heavy rain
+            case 504: // extreme rain
+            case 511: // freezing rain
+            case 522: // heavy intensity shower rain
+            case 531: // ragged shower rain
+                meteocons = '8';
+                break;
+
+            // Sleet
+            case 611: // sleet
+            case 612: // shower sleet
+            case 906: // hail
+                meteocons = '$';
+                break;
+
+            // Light snow
+            case 600: // light snow
+            case 615: // light rain and snow
+            case 620: // light shower snow
+                meteocons = '"';
+                break;
+
+            // Snow
+            case 621: // shower snow
+            case 601: // snow
+            case 602: // heavy snow
+            case 616: // rain and snow
+            case 622: // heavy shower snow
+                meteocons = '#';
+                break;
+
+            // No clouds
+            case 800: // clear sky
+            case 951: // calm
+            case 952: // light breeze
+            case 953: // gentle breeze
+            case 954: // moderate breeze
+            case 955: // fresh breeze
+                meteocons = daytime ? '1' : '2';
+                break;
+
+            // Light clouds
+            case 801: // few clouds
+            case 802: // scattered clouds
+            case 803: // broken clouds
+                meteocons = daytime ? '3' : '4';
+                break;
+
+            // Cloud
+            case 804: // overcast clouds
+                meteocons = '5';
+                break;
+
+            // Wind
+            case 771: // squalls
+            case 781: // tornado
+            case 900: // tornado
+            case 901: // tropical storm
+            case 902: // hurricane
+            case 905: // windy
+            case 956: // strong breeze
+            case 957: // high wind, near gale
+            case 958: // gale
+            case 959: // severe gale
+            case 960: // storm
+            case 961: // violent storm
+            case 962: // hurricane
+                meteocons = 'F';
+                break;
+
+            // Fog
+            case 741: // fog
+            case 701: // mist
+            case 711: // smoke
+            case 721: // haze
+            case 731: // sand, dust whirls
+            case 751: // sand
+            case 761: // dust
+            case 762: // volcanic ash
+                meteocons = 'L';
+                break;
+
+            // Not used
+            //case	904: // hot
+
+            default:
+                // Default to "n/a" meteocon symbol
+                var meteocons = ')';
+                break;
+
+        } // end switch;
+
+        return meteocons;
+
+    } // end openweathermap_id_to_meteocon_id() function;
+
+
+    // Today weather
+    var api_url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + widget_lat + '&lon=' + widget_lon + '&mode=xml&units=metric&appid=14a8eaa15a4938d223fcd014e2099b13';
+    //alert(api_url);
+    api_url = encodeURIComponent(api_url);
+    $.get('assets/relay/access.php?path=' + api_url, function (data) {
+
+        // IE8, how we love you!
+        // http://stackoverflow.com/questions/12046595/ie8-dom-transforming-xml-and-returning-nothing-from-jquery-find-or-filter
+        data = $.parseXML(data);
+
+        // Sunrise and sunset 
+        var sunrise = strtotime($(data).find('sun').attr('rise'));
+        var sunset = strtotime($(data).find('sun').attr('set'));
+        // Set daytrime to true or false
+        var timestamp = new Date();
+        timestamp = timestamp.getTime() / 1000; // in seconds not milliseconds
+        var daytime = (sunrise < timestamp && timestamp < sunset);
+        //alert( sunrise +' '+ timestamp +' '+sunset);
+
+        // Today weather icon (not temperature)
+        var symbol_id = $(data).find('weather').attr('number');
+        var icon_id = openweathermap_id_to_meteocon_id(symbol_id, daytime);
+        // Put the data onto the page
+        $('.today .weather-box .icon').attr('data-icon', icon_id);
+        // Temperature max and min don't work as current forecast only gives the temeperature of right now
+        //$('.today .weather-box .temperature.low').html(  Math.round($weather.find('temperature').attr('min'))  +"º");
+        //$('.today .weather-box .temperature.high').html(  Math.round($weather.find('temperature').attr('max'))  +"º");
+        //$('.today .weather-box').fadeIn();
+        $('.tomorrow').addClass('has-weather');
+
+    });
+
+
+    // Tomorrow weather (and today's temperature)
+    var api_url = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=' + widget_lat + '&lon=' + widget_lon + '&mode=xml&units=metric&cnt=2&appid=14a8eaa15a4938d223fcd014e2099b13';
+    //alert(api_url);
+    api_url = encodeURIComponent(api_url);
+    $.get('assets/relay/access.php?path=' + api_url, function (data) {
+        // IE8, how we love you!
+        // http://stackoverflow.com/questions/12046595/ie8-dom-transforming-xml-and-returning-nothing-from-jquery-find-or-filter
+        data = $.parseXML(data);
+
+        // Today - only used for temperature
+        var $weather = $(data).find('forecast time').eq(0);
+        console.log($weather);
+        // Put the data onto the page
+        $('.today .weather-box .icon').attr('data-icon', icon_id);
+        $('.today .weather-box .temperature.low .number').html(Math.round($weather.find('temperature').attr('min')));
+        $('.today .weather-box .temperature.high .number').html(Math.round($weather.find('temperature').attr('max')));
+        $('.today').addClass('has-weather');
+
+        // Tomorrow weather
+        daytime = true;
+        var $weather = $(data).find('forecast time').eq(1);
+        var symbol_id = $weather.find('symbol').attr('number');
+        var icon_id = openweathermap_id_to_meteocon_id(symbol_id, daytime);
+        // Put the data onto the page
+        $('.tomorrow .weather-box .icon').attr('data-icon', icon_id);
+        $('.tomorrow .weather-box .temperature.low .number').html(Math.round($weather.find('temperature').attr('min')));
+        $('.tomorrow .weather-box .temperature.high .number').html(Math.round($weather.find('temperature').attr('max')));
+        $('.tomorrow').addClass('has-weather');
+
+    });
+});

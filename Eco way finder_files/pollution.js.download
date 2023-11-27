@@ -1,0 +1,57 @@
+$(document).ready(function () {
+
+    // Returns a random integer between min (included) and max (excluded)
+    // Using Math.round() will give you a non-uniform distribution!
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    if ($('body').data('simulate-pollution')) {
+
+        // Fade in simulated air pollution
+        var forecastBand = $('body').data('simulate-pollution');
+        var forecastBandClass = forecastBand.toLowerCase().replace(/ /g, '-');
+        $('.report .aqi-box').addClass('aqi-' + forecastBandClass)
+            .find('.prediction span').html(forecastBand);
+        // Choose random message
+        var message_count = $('p.message.' + forecastBandClass).length
+        var message_rand = getRandomInt(0, message_count)
+        $('p.message.' + forecastBandClass).eq(message_rand).slideDown('slow');
+
+    } else {
+
+        $.get('https://www.londonair.org.uk/london/rss/londonairforecastxml.asp', function (data) {
+            //$.get('http://www.londonair.org.uk/london/rss/londonairforecastxml.asp', function(data) {
+
+            // IE8, how we love you!
+            // http://stackoverflow.com/questions/12046595/ie8-dom-transforming-xml-and-returning-nothing-from-jquery-find-or-filter
+            //data = $.parseXML(data);
+            console.log(data);
+            // Today: forecast.current
+            var $forecast = $(data).find('CurrentForecast[ForecastType=Current]');
+            var forecastBand = $forecast.attr('ForecastBand');
+            var forecastBandClass = forecastBand.toLowerCase().replace(/ /g, '-');
+            $('.report.today .aqi-box').addClass('aqi-' + forecastBandClass)
+                .find('.prediction span').html(forecastBand);
+            // Choose random message
+            var message_count = $('p.message.' + forecastBandClass).length
+            var message_rand = getRandomInt(0, message_count)
+            $('p.message.' + forecastBandClass).eq(message_rand).show(); //.slideDown('slow');
+
+
+
+            // Tomorrow: forecast.outlook
+            var $forecast = $(data).find('CurrentForecast[ForecastType=Future]');
+            var forecastId = $forecast.attr('ForecastID');
+            var forecastBand = $forecast.attr('ForecastBand');
+            var forecastBandClass = forecastBand.toLowerCase().replace(/ /g, '-');
+            $('.report.tomorrow').hide();
+            // add data onto page
+            if (forecastId) {
+                $('.report.tomorrow .aqi-box').addClass('aqi-' + forecastBandClass)
+                    .find('.prediction span').html(forecastBand);
+                $('.report.tomorrow').show();
+            }
+        });
+    }
+});
