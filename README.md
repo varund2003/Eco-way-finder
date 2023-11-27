@@ -43,14 +43,35 @@ Before you begin, ensure you have met the following requirements:
 
 The configuration file is located at `config/config.js`. You may customize the settings according to your requirements.
 
-```javascript
-module.exports = {
-  // Add your configuration options here
-  // For example:
-  // apiKey: 'your-api-key',
-  // defaultLocation: { lat: 0, lng: 0 },
-};
-```
+The server script uses a simple configuration file to set the port and the path to the HTML file it serves. Follow these steps to configure the server for your environment:
+
+1. Open the `config.json` file in the project directory.
+
+2. Update the configuration values as needed:
+
+   ```json
+   {
+     "port": 3000,
+     "htmlFilePath": "C:/Users/dvaru/Downloads/eco way finder/Eco way finder.html"
+   }
+   ```
+
+   - **port:** Specify the port on which the server will run. The default is 3000.
+   - **htmlFilePath:** Provide the full path to your HTML file. Ensure the path uses forward slashes and includes the drive letter (e.g., `C:/`).
+
+3. Save the `config.json` file.
+
+4. Run the server again:
+
+   ```bash
+   node index.js
+   ```
+
+5. Open your web browser and navigate to [http://localhost:3000](http://localhost:3000) to access the HTML file.
+
+**Note:** If the HTML file is moved or the path is incorrect, the server will return a 500 error. Make sure to verify the path in the `config.json` file.
+
+Feel free to customize the instructions based on your specific project's needs. If there are additional configuration options or considerations, include them in this section.
 
 ## Usage
 
@@ -64,7 +85,7 @@ module.exports = {
 
 3. Explore the Eco Way Finder interface, enter your starting and ending locations, and discover eco-friendly routes.
 
-## Contributing
+/*## Contributing
 
 We welcome contributions! If you'd like to contribute to Eco Way Finder, please follow these steps:
 
@@ -72,7 +93,7 @@ We welcome contributions! If you'd like to contribute to Eco Way Finder, please 
 2. Create a new branch for your feature or bug fix.
 3. Make your changes and commit them.
 4. Push your changes to your fork.
-5. Submit a pull request to the main repository.
+5. Submit a pull request to the main repository.*/
 
 ## License
 
