@@ -1,4 +1,3 @@
-```markdown
 # Eco Way Finder
 
 Eco Way Finder is a sustainable navigation system that helps users find eco-friendly routes for their travel. This README file provides instructions on setting up and running the Eco Way Finder application.
