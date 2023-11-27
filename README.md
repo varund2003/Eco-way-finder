@@ -24,7 +24,7 @@ Before you begin, ensure you have met the following requirements:
 1. Clone the Eco Way Finder repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/eco-way-finder.git
+   https://github.com/varund2003/Eco-way-finder.git
    ```
 
 2. Navigate to the project directory:
@@ -85,7 +85,7 @@ Feel free to customize the instructions based on your specific project's needs. 
 
 3. Explore the Eco Way Finder interface, enter your starting and ending locations, and discover eco-friendly routes.
 
-/*## Contributing
+## Contributing
 
 We welcome contributions! If you'd like to contribute to Eco Way Finder, please follow these steps:
 
@@ -93,7 +93,7 @@ We welcome contributions! If you'd like to contribute to Eco Way Finder, please 
 2. Create a new branch for your feature or bug fix.
 3. Make your changes and commit them.
 4. Push your changes to your fork.
-5. Submit a pull request to the main repository.*/
+5. Submit a pull request to the main repository.
 
 ## License
 
