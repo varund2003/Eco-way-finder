@@ -100,4 +100,3 @@ We welcome contributions! If you'd like to contribute to Eco Way Finder, please 
 This project is licensed under the [MIT License](LICENSE).
 ```
 
-Remember to include the actual configuration options and any other relevant details specific to your Eco Way Finder project. Additionally, update the installation steps if there are additional setup requirements for databases, APIs, or other services.
